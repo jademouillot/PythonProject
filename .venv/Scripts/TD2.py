@@ -5,6 +5,7 @@ import json
 import tkinter as tk
 from tkinter import messagebox
 from tkinter import PhotoImage
+import random
 
 received_values = []
 value_button = None
@@ -41,10 +42,10 @@ def calculate_average():
     else:
         print("Aucune valeur reçue pour calculer la moyenne.")
 
-def create_message():
+def create_message(a,b):
     message = {
-        "id": 3,
-        "state": 1
+        "id": a,
+        "state": b
     }
     return json.dumps(message)
 
@@ -63,6 +64,147 @@ def temp():
         label.config(text="La dernière valeur temp reçue est: {}".format(value_temp))
     else:
         label.config(text="value temp null")
+
+def generate_decreasing_number_eau():
+    max_value = 15
+    min_value = 7
+
+    # Attente initiale de 2 secondes
+    #time.sleep(2)
+
+    # Boucle de génération de nombres décroissants
+    while max_value >= min_value:
+        print("Current value:", max_value)
+        time.sleep(1)  # Attendre 1 seconde avant de décrémenter
+        max_value -= 1  # Décrémenter la valeur maximale
+
+        # Appeler une fonction lorsque la valeur atteint 10
+        if max_value == min_value:
+            print("Reached minimum value, calling a function...")
+            eau()
+
+def generate_decreasing_number_nutriments():   #engrais organique, normalement à renouveler tous les 6 mois mais ici simulation donc + rapide
+    max_value = 40
+    #min_value = 20 #prof!!
+    min_value = 30
+
+    # Attente initiale de 2 secondes
+    #time.sleep(2)
+
+    # Boucle de génération de nombres décroissants
+    while max_value >= min_value:
+        print("Current value:", max_value)
+        time.sleep(1)# Attendre 1 seconde avant de décrémenter
+        max_value -= 2  # Décrémenter la valeur maximale
+
+        # Appeler une fonction lorsque la valeur atteint 10
+        if max_value == min_value:
+            print("Reached minimum value, calling a function...")
+            nutriments()
+
+def generate_decreasing_number_lumiere():
+    max_value = 10000  #a l'ombre
+    min_value = 4000
+
+    # Attente initiale de 2 secondes
+    #time.sleep(2)
+
+    # Boucle de génération de nombres décroissants
+    while max_value >= min_value:
+        print("Current value:", max_value)
+        time.sleep(1)  # Attendre 1 seconde avant de décrémenter
+        max_value -= 1000  # Décrémenter la valeur maximale
+
+        # Appeler une fonction lorsque la valeur atteint 10
+        if max_value == min_value:
+            print("Reached minimum value, calling a function...")
+            lumiere()
+
+def eau():
+    #si le niveau d'eau est ok (on connait le niveau d'eau nécessaire pour la plante = 15 cl)
+    #alors on éteint la LED bleue
+    #si il manque de l'eau alors LED s'allume
+
+    #sinon on clignote la LED bleue + on clignote le bouton eau sur itnerface + texte "il manque de l'eau, appuyez sur tel bouton de la carte")
+    toggle_color(button1, 1, water, 1)
+
+def nutriments():
+    #si le niveau d'eau est ok (on connait le niveau d'eau nécessaire pour la plante = 15 cl)
+    #alors on éteint la LED bleue
+    #si il manque de l'eau alors LED s'allume
+
+    #sinon on clignote la LED bleue + on clignote le bouton eau sur itnerface + texte "il manque de l'eau, appuyez sur tel bouton de la carte")
+    toggle_color(button2, 2, "nutrients", 2)
+
+
+def lumiere():
+    #si le niveau d'eau est ok (on connait le niveau d'eau nécessaire pour la plante = 15 cl)
+    #alors on éteint la LED bleue
+    #si il manque de l'eau alors LED s'allume
+
+    #sinon on clignote la LED bleue + on clignote le bouton eau sur itnerface + texte "il manque de l'eau, appuyez sur tel bouton de la carte")
+    toggle_color_lum(button3, 3)
+
+def show_new_window_stats():
+    new_window = tk.Toplevel(root)
+    new_window.title("BOTANICARE - STATISTICS")
+    new_window.geometry("400x300")
+    label = tk.Label(new_window, text="Statistic of the plant")
+    label.pack(padx=20, pady=20)
+
+def show_new_window_history():
+    new_window = tk.Toplevel(root)
+    new_window.title("BOTANICARE - HISTORY")
+    new_window.geometry("400x300")
+    label = tk.Label(new_window, text="History of the plant")
+    label.pack(padx=20, pady=20)
+
+def toggle_color(button, numbutton, substance, numled):
+    label = tk.Label(root, text="Click on Button" + str(numbutton) + "(card) to give" + substance + "to your plant!")
+    if substance=="water":
+        label.pack(padx=20, pady=20)
+    else:
+        label.pack(padx=30, pady=30)
+    while True:
+        if substance == "water":
+            button.config(bg="blue")
+        else:
+            button.config(bg="green")
+        root.update()
+        message_LEDS = create_message(numled, 1)
+        client.publish("isen15/led", message_LEDS, qos=1)
+        time.sleep(1)
+        root.after(500)  # Attend 500 ms (0.5 seconde)
+
+        button.config(bg="white")
+        root.update()
+        message_LEDS = create_message(numled, 0)
+        client.publish("isen15/led", message_LEDS, qos=1)
+        time.sleep(1)
+        root.after(500)  # Attend à nouveau 500 ms
+
+def toggle_color_lum(button, numled):
+    label = tk.Label(root, text="Careful! Your plant needs more light!")
+    label.pack(padx=10, pady=10)
+    while True:
+        button.config(bg="red")
+        root.update()
+        message_LEDS = create_message(numled, 1)
+        client.publish("isen15/led", message_LEDS, qos=1)
+        time.sleep(1)
+        root.after(500)  # Attend 500 ms (0.5 seconde)
+
+        button.config(bg="white")
+        root.update()
+        message_LEDS = create_message(numled, 0)
+        client.publish("isen15/led", message_LEDS, qos=1)
+        time.sleep(1)
+        root.after(500)  # Attend à nouveau 500 ms
+
+def suivi_plant():
+    #generate_decreasing_number_eau()
+    #generate_decreasing_number_nutriments()
+    generate_decreasing_number_lumiere()
 
 client = paho.Client(paho.CallbackAPIVersion.VERSION1,"")
 
@@ -89,6 +231,30 @@ client.loop_start()
 # Création de la fenêtre principale
 root = tk.Tk()
 root.title("Botanicare")
+root.geometry("400x300")  # Définir la taille de la fenêtre principale (largeur x hauteur)
+
+menu_bar = tk.Menu(root)
+
+# Création du menu "File" avec deux options
+file_menu = tk.Menu(menu_bar, tearoff=0)
+
+# Ajout d'une étiquette personnalisée avec une largeur fixe
+label_statistics = tk.Label(root, text="Statistics", width=20, anchor="w") #changer la taille des boutons?
+file_menu.add_command(label="Statistics", command=show_new_window_stats, compound="left", image=None)
+
+# Ajout d'une étiquette personnalisée avec une largeur fixe
+label_history = tk.Label(root, text="History", width=20, anchor="w")
+file_menu.add_command(label="History", command=show_new_window_history, compound="left", image=None)
+
+file_menu.add_separator()
+
+# Ajout d'une étiquette personnalisée avec une largeur fixe
+label_exit = tk.Label(root, text="Exit", width=20, anchor="w")
+file_menu.add_command(label="Exit", command=root.quit, compound="left", image=None)
+
+menu_bar.add_cascade(label="Pages", menu=file_menu)
+
+root.config(menu=menu_bar)
 
 # Définir la taille de la police pour le titre
 titre_font = ("Helvetica", 20)
@@ -99,20 +265,15 @@ titre_label = tk.Label(root, text="BOTANICARE", font=titre_font)
 # Ajouter le titre à la fenêtre
 titre_label.pack(pady=20)
 
-
 # Charger l'image depuis un fichier (par exemple, "image.png")
 #image_path = "chemin/vers/votre/image/image.png"  # Remplacez "chemin/vers/votre/image/image.png" par le chemin de votre image
 #image = tk.PhotoImage(file=image_path)
 
 # Créer un widget Label pour afficher l'image
-image_label = tk.Label(root, image=image)
+#image_label = tk.Label(root, image=image)
 
 # Ajouter l'image à la fenêtre
-image_label.pack(pady=10)
-
-# Création d'une étiquette pour afficher les messages
-label = tk.Label(root, text="")
-label.pack(padx=20, pady=20)
+#image_label.pack(pady=10)
 
 # Création d'un cadre pour organiser les éléments
 frame = tk.Frame(root)
@@ -120,10 +281,9 @@ frame.pack(padx=20, pady=20)
 client.subscribe("isen15/temp", qos=1)
 
 # Création d'un bouton avec le fond bleu
-button1 = tk.Button(frame, text="Eau", command=temp, bg="blue", fg="white")  # bg pour le fond, fg pour la couleur du texte
+button1 = tk.Button(frame, text="Eau", bg="blue", fg="white")  # bg pour le fond, fg pour la couleur du texte
 # Création de plusieurs boutons et les placer dans une grille
 button1.grid(row=0, column=0, padx=10, pady=10)
-
 
 # Création d'un bouton avec le fond vert
 button2 = tk.Button(frame, text="Nutriments", command=temp, bg="green", fg="white")  # bg pour le fond, fg pour la couleur du texte
@@ -135,12 +295,23 @@ button3 = tk.Button(frame, text="Lumière", command=temp, bg="red", fg="white") 
 # Création de plusieurs boutons et les placer dans une grille
 button3.grid(row=1, column=0, padx=10, pady=10)
 
-
-button4 = tk.Button(frame, text="Température", command=show_message)
+button4 = tk.Button(frame, text="Température", command=temp)
 button4.grid(row=1, column=1, padx=10, pady=10)
+
+# Création d'un bouton avec le fond bleu
+button5 = tk.Button(frame, text="Start monitoring the plant", command = suivi_plant, bg="blue", fg="white")  # bg pour le fond, fg pour la couleur du texte
+# Création de plusieurs boutons et les placer dans une grille
+button5.grid(row=2, column=0, padx=10, pady=10)
+
+# Création d'une étiquette pour afficher les messages
+label = tk.Label(root, text="")
+label.pack(padx=20, pady=20)
+
+#generate_decreasing_number()
 
 # Boucle principale d'exécution
 root.mainloop()
+
 
 try:
     while True:
@@ -185,3 +356,12 @@ except KeyboardInterrupt:
 client.loop_stop()
 
 #client.loop_forever()
+
+#au debut besoin de rien -> pas de led allumée, bonnes conditions et seulemnt apres que ça peut changer
+
+#temperature/lumiere
+#si temp baisse -> lum baisse
+
+#voir pour faire les 3 fonctions en meme temps
+#boutons
+#mettre les données dans fichier et faire statistique et historique
