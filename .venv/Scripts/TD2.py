@@ -6,6 +6,7 @@ import tkinter as tk
 from tkinter import messagebox
 from tkinter import PhotoImage
 import random
+import multiprocessing
 
 received_values = []
 value_button = None
@@ -201,10 +202,25 @@ def toggle_color_lum(button, numled):
         time.sleep(1)
         root.after(500)  # Attend à nouveau 500 ms
 
-def suivi_plant():
+def monitoring_plant():
+    # Créer des processus pour chaque fonction
+    processus1 = multiprocessing.Process(target=generate_decreasing_number_eau)
+    processus2 = multiprocessing.Process(target=generate_decreasing_number_nutriments)
+    processus3 = multiprocessing.Process(target=generate_decreasing_number_lumiere)
+
+    # Démarrer les processus
+    processus1.start()
+    processus2.start()
+    processus3.start()
+
+    # Attendre que les processus se terminent
+    processus1.join()
+    processus2.join()
+    processus3.join()
+
     #generate_decreasing_number_eau()
     #generate_decreasing_number_nutriments()
-    generate_decreasing_number_lumiere()
+    #generate_decreasing_number_lumiere()
 
 client = paho.Client(paho.CallbackAPIVersion.VERSION1,"")
 
@@ -231,7 +247,7 @@ client.loop_start()
 # Création de la fenêtre principale
 root = tk.Tk()
 root.title("Botanicare")
-root.geometry("400x300")  # Définir la taille de la fenêtre principale (largeur x hauteur)
+root.geometry("500x600")  # Définir la taille de la fenêtre principale (largeur x hauteur)
 
 menu_bar = tk.Menu(root)
 
@@ -266,14 +282,16 @@ titre_label = tk.Label(root, text="BOTANICARE", font=titre_font)
 titre_label.pack(pady=20)
 
 # Charger l'image depuis un fichier (par exemple, "image.png")
-#image_path = "chemin/vers/votre/image/image.png"  # Remplacez "chemin/vers/votre/image/image.png" par le chemin de votre image
-#image = tk.PhotoImage(file=image_path)
+image_path = "C:\\Users\\jadem\\PycharmProjects\\TD1_DATACOMM\\image.png"
+image = tk.PhotoImage(file=image_path)
+
+image = image.subsample(2, 2)  # Facteur de sous-échantillonnage : 2 dans chaque dimension
 
 # Créer un widget Label pour afficher l'image
-#image_label = tk.Label(root, image=image)
+image_label = tk.Label(root, image=image)
 
 # Ajouter l'image à la fenêtre
-#image_label.pack(pady=10)
+image_label.pack(pady=10)
 
 # Création d'un cadre pour organiser les éléments
 frame = tk.Frame(root)
@@ -281,27 +299,27 @@ frame.pack(padx=20, pady=20)
 client.subscribe("isen15/temp", qos=1)
 
 # Création d'un bouton avec le fond bleu
-button1 = tk.Button(frame, text="Eau", bg="blue", fg="white")  # bg pour le fond, fg pour la couleur du texte
+button5 = tk.Button(frame, text="Start monitoring the plant", command = monitoring_plant(), bg="blue", fg="white")  # bg pour le fond, fg pour la couleur du texte
 # Création de plusieurs boutons et les placer dans une grille
-button1.grid(row=0, column=0, padx=10, pady=10)
-
-# Création d'un bouton avec le fond vert
-button2 = tk.Button(frame, text="Nutriments", command=temp, bg="green", fg="white")  # bg pour le fond, fg pour la couleur du texte
-# Création de plusieurs boutons et les placer dans une grille
-button2.grid(row=0, column=1, padx=10, pady=10)
-
-# Création d'un bouton avec le fond rouge
-button3 = tk.Button(frame, text="Lumière", command=temp, bg="red", fg="white")  # bg pour le fond, fg pour la couleur du texte
-# Création de plusieurs boutons et les placer dans une grille
-button3.grid(row=1, column=0, padx=10, pady=10)
-
-button4 = tk.Button(frame, text="Température", command=temp)
-button4.grid(row=1, column=1, padx=10, pady=10)
+button5.grid(row=0, column=2, padx=10, pady=10)
 
 # Création d'un bouton avec le fond bleu
-button5 = tk.Button(frame, text="Start monitoring the plant", command = suivi_plant, bg="blue", fg="white")  # bg pour le fond, fg pour la couleur du texte
+button1 = tk.Button(frame, text="Water", bg="blue", fg="white")  # bg pour le fond, fg pour la couleur du texte
 # Création de plusieurs boutons et les placer dans une grille
-button5.grid(row=2, column=0, padx=10, pady=10)
+button1.grid(row=1, column=0, padx=10, pady=10)
+
+# Création d'un bouton avec le fond vert
+button2 = tk.Button(frame, text="Nutrients", bg="green", fg="white")  # bg pour le fond, fg pour la couleur du texte
+# Création de plusieurs boutons et les placer dans une grille
+button2.grid(row=1, column=3, padx=10, pady=10)
+
+# Création d'un bouton avec le fond rouge
+button3 = tk.Button(frame, text="Light", bg="red", fg="white")  # bg pour le fond, fg pour la couleur du texte
+# Création de plusieurs boutons et les placer dans une grille
+button3.grid(row=2, column=0, padx=10, pady=10)
+
+button4 = tk.Button(frame, text="Temperature", command=temp)
+button4.grid(row=2, column=3, padx=10, pady=10)
 
 # Création d'une étiquette pour afficher les messages
 label = tk.Label(root, text="")
@@ -363,5 +381,20 @@ client.loop_stop()
 #si temp baisse -> lum baisse
 
 #voir pour faire les 3 fonctions en meme temps
+#fait normalement -> a tester
+
 #boutons
+#lancer le programme generate
+#attendre appui bouton
+#recommencer programme generate
+#...
+
 #mettre les données dans fichier et faire statistique et historique
+# Spécifier un chemin complet pour créer le fichier dans un emplacement spécifique
+#chemin_complet = "/chemin/vers/votre/emplacement/donnees.txt"
+
+# Ouvrir un fichier en mode ajout
+#with open(chemin_complet, "a") as fichier:
+    # Écrire des données à la fin du fichier
+    #fichier.write("Ceci est une nouvelle ligne ajoutée.\n")
+    #fichier.write("Voici une autre nouvelle ligne ajoutée.\n")
