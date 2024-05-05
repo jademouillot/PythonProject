@@ -127,7 +127,7 @@ def eau():
     #si il manque de l'eau alors LED s'allume
 
     #sinon on clignote la LED bleue + on clignote le bouton eau sur itnerface + texte "il manque de l'eau, appuyez sur tel bouton de la carte")
-    toggle_color(button1, 1, water, 1)
+    toggle_color(button1, 1, "water", 1)
 
 def nutriments():
     #si le niveau d'eau est ok (on connait le niveau d'eau nécessaire pour la plante = 15 cl)
