@@ -161,7 +161,7 @@ def show_new_window_history():
     label.pack(padx=20, pady=20)
 
 def toggle_color(button, numbutton, substance, numled):
-    label = tk.Label(root, text="Click on Button" + str(numbutton) + "(card) to give" + substance + "to your plant!")
+    label = tk.Label(root, text="Click on Button" + str(numbutton) + "(card) to give " + substance + " to your plant!")
     if substance=="water":
         label.pack(padx=20, pady=20)
     else:
@@ -204,23 +204,23 @@ def toggle_color_lum(button, numled):
 
 def monitoring_plant():
     # Créer des processus pour chaque fonction
-    processus1 = multiprocessing.Process(target=generate_decreasing_number_eau)
-    processus2 = multiprocessing.Process(target=generate_decreasing_number_nutriments)
-    processus3 = multiprocessing.Process(target=generate_decreasing_number_lumiere)
+    #processus1 = multiprocessing.Process(target=generate_decreasing_number_eau)
+    #processus2 = multiprocessing.Process(target=generate_decreasing_number_nutriments)
+    #processus3 = multiprocessing.Process(target=generate_decreasing_number_lumiere)
+    #
+    # # Démarrer les processus
+    #processus1.start()
+    #processus2.start()
+    #processus3.start()
+    #
+    # # Attendre que les processus se terminent
+    #processus1.join()
+    #processus2.join()
+    #processus3.join()
 
-    # Démarrer les processus
-    processus1.start()
-    processus2.start()
-    processus3.start()
-
-    # Attendre que les processus se terminent
-    processus1.join()
-    processus2.join()
-    processus3.join()
-
-    #generate_decreasing_number_eau()
-    #generate_decreasing_number_nutriments()
-    #generate_decreasing_number_lumiere()
+    generate_decreasing_number_eau()
+    generate_decreasing_number_nutriments()
+    generate_decreasing_number_lumiere()
 
 client = paho.Client(paho.CallbackAPIVersion.VERSION1,"")
 
@@ -299,11 +299,6 @@ frame.pack(padx=20, pady=20)
 client.subscribe("isen15/temp", qos=1)
 
 # Création d'un bouton avec le fond bleu
-button5 = tk.Button(frame, text="Start monitoring the plant", command = monitoring_plant(), bg="blue", fg="white")  # bg pour le fond, fg pour la couleur du texte
-# Création de plusieurs boutons et les placer dans une grille
-button5.grid(row=0, column=2, padx=10, pady=10)
-
-# Création d'un bouton avec le fond bleu
 button1 = tk.Button(frame, text="Water", bg="blue", fg="white")  # bg pour le fond, fg pour la couleur du texte
 # Création de plusieurs boutons et les placer dans une grille
 button1.grid(row=1, column=0, padx=10, pady=10)
@@ -311,7 +306,7 @@ button1.grid(row=1, column=0, padx=10, pady=10)
 # Création d'un bouton avec le fond vert
 button2 = tk.Button(frame, text="Nutrients", bg="green", fg="white")  # bg pour le fond, fg pour la couleur du texte
 # Création de plusieurs boutons et les placer dans une grille
-button2.grid(row=1, column=3, padx=10, pady=10)
+button2.grid(row=1, column=1, padx=10, pady=10)
 
 # Création d'un bouton avec le fond rouge
 button3 = tk.Button(frame, text="Light", bg="red", fg="white")  # bg pour le fond, fg pour la couleur du texte
@@ -319,59 +314,66 @@ button3 = tk.Button(frame, text="Light", bg="red", fg="white")  # bg pour le fon
 button3.grid(row=2, column=0, padx=10, pady=10)
 
 button4 = tk.Button(frame, text="Temperature", command=temp)
-button4.grid(row=2, column=3, padx=10, pady=10)
+button4.grid(row=2, column=1, padx=10, pady=10)
+
+# Création d'un bouton avec le fond bleu
+button5 = tk.Button(frame, text="Start monitoring the plant", command = monitoring_plant, bg="blue", fg="white")  # bg pour le fond, fg pour la couleur du texte
+# Création de plusieurs boutons et les placer dans une grille
+button5.grid(row=0, column=0, padx=10, pady=10)
 
 # Création d'une étiquette pour afficher les messages
 label = tk.Label(root, text="")
 label.pack(padx=20, pady=20)
 
-#generate_decreasing_number()
+# #generate_decreasing_number()
+#
+# # Boucle principale d'exécution
+#
+#
+#
+# try:
+#     while True:
+#
+#         # Calcul de la moyenne des valeurs reçues
+#         print("debut avant creation message")
+#         message_LEDS = create_message()
+#         print("avant publish")
+#         client.publish("isen15/led", message_LEDS, qos=1)
+#         print("apres message")
+#
+#         time.sleep(0.5)
+#
+#         if value_button is not None:
+#             print("La dernière valeur reçue est:", value_button)
+#         else:
+#             print("value_button null")
+#
+#         #print("le bouton avec l'id", received_values[-1], "est appuyé")
+#         print("received values", received_values)
+#
+#         time.sleep(0.5)
+#
+#         message_temp = create_message_temp()
+#
+#         client.publish("isen15/getTemp",message_temp, qos=1)
+#
+#         if value_temp is not None:
+#             print("La dernière valeur temp reçue est:", value_temp)
+#         else:
+#             print("value temp null")
+#
+#         # Attente de 3 secondes avant d'envoyer le prochain message
+#         time.sleep(3)
+#
+#         #client.subscribe("valeur", qos=1)
+#
+# except KeyboardInterrupt:
+#     # Arrêt de la boucle de publication en cas d'interruption du clavier (Ctrl+C)
+#     pass
+#
+# client.loop_stop()
 
-# Boucle principale d'exécution
 root.mainloop()
-
-
-try:
-    while True:
-
-        # Calcul de la moyenne des valeurs reçues
-        print("debut avant creation message")
-        message_LEDS = create_message()
-        print("avant publish")
-        client.publish("isen15/led", message_LEDS, qos=1)
-        print("apres message")
-
-        time.sleep(0.5)
-
-        if value_button is not None:
-            print("La dernière valeur reçue est:", value_button)
-        else:
-            print("value_button null")
-
-        #print("le bouton avec l'id", received_values[-1], "est appuyé")
-        print("received values", received_values)
-
-        time.sleep(0.5)
-
-        message_temp = create_message_temp()
-
-        client.publish("isen15/getTemp",message_temp, qos=1)
-
-        if value_temp is not None:
-            print("La dernière valeur temp reçue est:", value_temp)
-        else:
-            print("value temp null")
-
-        # Attente de 3 secondes avant d'envoyer le prochain message
-        time.sleep(3)
-
-        #client.subscribe("valeur", qos=1)
-
-except KeyboardInterrupt:
-    # Arrêt de la boucle de publication en cas d'interruption du clavier (Ctrl+C)
-    pass
-
-client.loop_stop()
 
 #client.loop_forever()
 
